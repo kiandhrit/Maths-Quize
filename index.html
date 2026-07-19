@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Quiz - Grades 1 to 12</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+}
+
+.container{
+background:white;
+width:90%;
+max-width:700px;
+padding:30px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,.3);
+text-align:center;
+}
+
+h1{
+color:#0077cc;
+margin-bottom:20px;
+}
+
+select,button{
+padding:12px;
+font-size:18px;
+margin:10px;
+border-radius:8px;
+border:none;
+}
+
+button{
+background:#0077cc;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#005fa3;
+}
+
+#quizBox{
+display:none;
+margin-top:20px;
+}
+
+.option{
+background:#f2f2f2;
+padding:15px;
+margin:10px 0;
+border-radius:8px;
+cursor:pointer;
+transition:.3s;
+}
+
+.option:hover{
+background:#d7ecff;
+}
+
+#result{
+display:none;
+}
+
+.progress{
+margin-top:15px;
+font-weight:bold;
+color:#555;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>📚 Math Quiz</h1>
+
+<div id="startBox">
+<h2>Select Your Grade</h2>
+
+<select id="grade">
+<option value="">Choose Grade</option>
+<option value="1">Grade 1</option>
+<option value="2">Grade 2</option>
+<option value="3">Grade 3</option>
+<option value="4">Grade 4</option>
+<option value="5">Grade 5</option>
+<option value="6">Grade 6</option>
+<option value="7">Grade 7</option>
+<option value="8">Grade 8</option>
+<option value="9">Grade 9</option>
+<option value="10">Grade 10</option>
+<option value="11">Grade 11</option>
+<option value="12">Grade 12</option>
+</select>
+
+<br>
+
+<button onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quizBox">
+
+<h2 id="question"></h2>
+
+<div id="options"></div>
+
+<div class="progress" id="progress"></div>
+
+</div>
+
+<div id="result">
+
+<h2 id="score"></h2>
+
+<button onclick="location.reload()">Play Again</button>
+
+</div>
+
+</div>
+
+<script>
+
+const quizzes={
+
+1:[
+{q:"2 + 3 = ?",o:["4","5","6","7"],a:1},
+{q:"5 - 2 = ?",o:["2","3","4","5"],a:1},
+{q:"10 + 1 = ?",o:["9","11","12","13"],a:1},
+{q:"6 - 1 = ?",o:["4","5","6","7"],a:1},
+{q:"4 + 4 = ?",o:["6","7","8","9"],a:2}
+],
+
+2:[
+{q:"12 + 8 = ?",o:["20","18","21","19"],a:0},
+{q:"15 - 7 = ?",o:["7","8","9","10"],a:1},
+{q:"6 × 2 = ?",o:["10","12","14","16"],a:1},
+{q:"20 ÷ 4 = ?",o:["5","6","4","8"],a:0},
+{q:"9 + 9 = ?",o:["17","18","19","20"],a:1}
+],
+
+3:[
+{q:"9 × 3 = ?",o:["18","21","27","24"],a:2},
+{q:"36 ÷ 6 = ?",o:["4","5","6","7"],a:2},
+{q:"25 + 15 = ?",o:["35","40","45","50"],a:1},
+{q:"40 - 17 = ?",o:["23","24","22","21"],a:0},
+{q:"8 × 5 = ?",o:["35","40","45","50"],a:1}
+],
+
+4:[
+{q:"56 ÷ 8 = ?",o:["6","7","8","9"],a:1},
+{q:"14 × 4 = ?",o:["52","56","58","60"],a:1},
+{q:"100 - 37 = ?",o:["63","64","62","61"],a:0},
+{q:"15 + 26 = ?",o:["39","40","41","42"],a:2},
+{q:"9 × 8 = ?",o:["70","71","72","73"],a:2}
+],
+
+5:[
+{q:"125 + 275 = ?",o:["350","375","400","425"],a:2},
+{q:"12² = ?",o:["124","144","164","134"],a:1},
+{q:"15 × 12 = ?",o:["180","170","160","190"],a:0},
+{q:"81 ÷ 9 = ?",o:["8","9","10","7"],a:1},
+{q:"250 - 175 = ?",o:["70","75","80","85"],a:1}
+],
+
+6:[
+{q:"3/4 = ?",o:["0.5","0.75","0.8","1"],a:1},
+{q:"LCM of 4 and 6?",o:["10","12","14","16"],a:1},
+{q:"18²=?",o:["324","342","326","320"],a:0},
+{q:"50% of 80?",o:["30","35","40","45"],a:2},
+{q:"9³=?",o:["729","810","700","900"],a:0}
+],
+
+7:[
+{q:"(-5)+8=?",o:["2","3","4","5"],a:1},
+{q:"7²=?",o:["47","48","49","50"],a:2},
+{q:"15% of 200=?",o:["25","30","35","40"],a:1},
+{q:"√81=?",o:["8","9","10","11"],a:1},
+{q:"18×7=?",o:["124","126","128","130"],a:1}
+],
+
+8:[
+{q:"Solve: 2x=18",o:["7","8","9","10"],a:2},
+{q:"√144=?",o:["10","11","12","13"],a:2},
+{q:"5³=?",o:["125","100","150","130"],a:0},
+{q:"20% of 150=?",o:["25","30","35","40"],a:1},
+{q:"13×13=?",o:["169","159","179","189"],a:0}
+],
+
+9:[
+{q:"x²=64",o:["6","7","8","9"],a:2},
+{q:"π≈?",o:["3.12","3.14","3.16","3.18"],a:1},
+{q:"45²=?",o:["2025","2045","2000","2100"],a:0},
+{q:"√225=?",o:["14","15","16","17"],a:1},
+{q:"10³=?",o:["100","1000","10000","500"],a:1}
+],
+
+10:[
+{q:"sin90°=?",o:["0","1","-1","0.5"],a:1},
+{q:"cos0°=?",o:["0","1","2","-1"],a:1},
+{q:"100²=?",o:["1000","10000","100000","100"],a:1},
+{q:"√400=?",o:["10","15","20","25"],a:2},
+{q:"15²=?",o:["215","225","235","245"],a:1}
+],
+
+11:[
+{q:"Derivative of x²?",o:["x","2x","x²","4x"],a:1},
+{q:"log₁₀100=?",o:["1","2","3","4"],a:1},
+{q:"Integral of 1 dx?",o:["1","x","x²","2x"],a:1},
+{q:"2³=?",o:["6","8","9","10"],a:1},
+{q:"√169=?",o:["11","12","13","14"],a:2}
+],
+
+12:[
+{q:"Derivative of sinx?",o:["cosx","-cosx","tanx","secx"],a:0},
+{q:"∫x dx=?",o:["x²","x²/2","2x","1"],a:1},
+{q:"e≈?",o:["2.71","3.14","1.61","1.41"],a:0},
+{q:"Limit x→0 sinx/x=?",o:["0","1","∞","2"],a:1},
+{q:"12²=?",o:["124","134","144","154"],a:2}
+]
+
+};
+
+let quiz=[];
+let current=0;
+let score=0;
+
+function startQuiz(){
+
+let g=document.getElementById("grade").value;
+
+if(g==""){
+alert("Please choose a grade.");
+return;
+}
+
+quiz=quizzes[g];
+
+document.getElementById("startBox").style.display="none";
+document.getElementById("quizBox").style.display="block";
+
+showQuestion();
+
+}
+
+function showQuestion(){
+
+let q=quiz[current];
+
+document.getElementById("question").innerHTML=q.q;
+
+document.getElementById("progress").innerHTML=
+"Question "+(current+1)+" of "+quiz.length;
+
+let html="";
+
+q.o.forEach((opt,i)=>{
+
+html+=`<div class="option" onclick="check(${i})">${opt}</div>`;
+
+});
+
+document.getElementById("options").innerHTML=html;
+
+}
+
+function check(choice){
+
+if(choice==quiz[current].a) score++;
+
+current++;
+
+if(current<quiz.length){
+
+showQuestion();
+
+}else{
+
+document.getElementById("quizBox").style.display="none";
+document.getElementById("result").style.display="block";
+
+document.getElementById("score").innerHTML=
+"🎉 You scored "+score+" out of "+quiz.length;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
